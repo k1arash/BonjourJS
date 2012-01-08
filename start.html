@@ -4,9 +4,13 @@
 		<title>Start Page</title>
 	</head>
 	<body>
-		<form action="/upload" method="post">
-			<textarea name="text" rows="20" cols="60"></textarea>
-			<input type="submit" value="Submit Text"/>
+		<form action="/upload" enctype="multipart/form-data" method="post">
+			<div><p>Write a message:</p></div>
+			<textarea name="text" rows="5" cols="40"></textarea>
+			<br/>
+			<div><p>Choose an image:</p></div>
+			<input type="file" name="upload">
+			<input type="submit" value="Submit"/>
 		</form>
 	</body
 </html>

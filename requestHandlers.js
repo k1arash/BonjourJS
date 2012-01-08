@@ -1,6 +1,7 @@
 var exec = require("child_process").exec;
 var fs = require("fs");
 var querystring = require("querystring");
+var formidable = require("formidable");
 
 function start(response, postData) {
 	response.writeHead(200, {"Content-Type": "text/html"});
@@ -16,10 +17,32 @@ function start(response, postData) {
 }
 
 function upload(response, postData) {
+	console.log("upload page loading");
 	response.writeHead(200, {"Content-Type": "text/html"});
 	response.write("You sent:<br\>");
-	response.write(querystring.parse(postData).text);
-	response.end();
+	console.log(postData.fields.text);
+	response.write(postData.fields.text);
+	//fs.renameSync(postData.files.upload.path, "/tmp/test.png");
+	exec("mv " + postData.files.upload.path + " /tmp/test.png",
+		function(error, stdout, stderr) {
+			response.write("<img src='/show'/>");
+			response.end();			
+		});
+}
+
+function show(response, postData) {
+	fs.readFile("/tmp/test.png", "binary", function(error, file) {
+		if(error)
+		{
+			response.writeHead(500, {"Content-Type": "text/plain"});
+			response.write(error + "\n");
+			response.end();
+		} else {
+			response.writeHead(200, {"Content-Type": "image/png"});
+			response.write(file, "binary");
+			response.end();
+		} 
+	});
 }
 
 function favicon(response, postData) {
@@ -36,6 +59,7 @@ function favicon(response, postData) {
 	});
 }
 
+exports.favicon = favicon;
 exports.start = start;
 exports.upload = upload;
-exports.favicon = favicon;
+exports.show = show;
